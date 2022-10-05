@@ -98,7 +98,7 @@ def cb_button(update, context):
             bot.send_message(telegram_id, '연중무휴 24시간')
 
 
-
+# 동작확인 위한 코드 (추후 수정 예정)
 def operating_time():
     time.sleep(5)
     print('.')
@@ -110,15 +110,15 @@ def number_books():
 
 def loan_return():
     time.sleep(5)
-    print('대출 반납')
+    print('.')
 
 
 def overdue_penalty():
     time.sleep(3)
-    print('연체 안내 처리 완료')
+    print('.')
 
 
-
+# 시나리오 업데이트 예정
 def handler1(update, context):
     user_text = update.message.text
     if user_text == "반납":
