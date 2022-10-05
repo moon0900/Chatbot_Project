@@ -3,8 +3,8 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHa
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
 import crawlingBookInfo as cb
 
-token = '5752050232:AAGnpg_A4lfUHtckrzLQaFSQwm1ZBVHIczM'
-id = '5744498162'
+token = '봇 토큰'
+id = '사용자 id'
 
 # conversation states
 SEARCH, FEWRESULTS, MANYRESULTS, SETSEARCHOPTION, ADDKEYWORD, NORESULT, OTHER = range(7)
