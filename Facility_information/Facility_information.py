@@ -8,13 +8,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, Filters
 from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, handler
 
-BOT_TOKEN = '5715860041:AAEiuKtxuKqU0GjVmjYk2RqUbC_lA-_il8g'
+BOT_TOKEN = '토큰'
 bot = telegram.Bot(BOT_TOKEN)
 updater = Updater(token=BOT_TOKEN, use_context=True)
 
 dispatcher = updater.dispatcher
 updater.start_polling()
-telegram_id = '5586128097'
+telegram_id = '아이디'
 info_message = '''시작하려면 /start를 입력해주세요'''
 bot.sendMessage(chat_id=telegram_id, text=info_message)
 
