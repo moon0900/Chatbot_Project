@@ -161,6 +161,8 @@ def checkKeywordToAdd(update, context):
 def bookAddSearch(update, context):
     option = context.user_data['selection']
     chat_txt = update.message.text
+    if option == 4:
+        chat_txt = re.sub(r'[^0-9]', '', chat_txt)
     result = cb.addKeywordSearch(option, chat_txt)
     return_val = showSearchResult(update, context, result)
     return return_val
@@ -272,7 +274,7 @@ def main():
     )
 
     dp.add_handler(conv_handler)
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    #dp.add_handler(MessageHandler(Filters.text, echo))
 
     updater.start_polling()
 
