@@ -10,7 +10,7 @@ driver.get('https://discover.duksung.ac.kr/#/')
 def getBookInfo(i):
     elem = driver.find_element_by_css_selector('div.ikc-search-item:nth-child('+str(i)+') > div.ikc-item-info > ul > li:nth-child(1) > a')
     elem.click()
-    time.sleep(1)
+    time.sleep(0.5)
     bookInfo = driver.find_element_by_css_selector('div.ikc-biblio-info > ul')
     bookTitle = bookInfo.find_element_by_css_selector('li:nth-child(1) > span > a').text.split('/')
     bookPub = bookInfo.find_element_by_css_selector('li:nth-child(2) > span > span').text.split(',')
@@ -62,7 +62,7 @@ def startSearch(keyword):
     elem = driver.find_element_by_class_name('ikc-btn-search')
     elem.click()
 
-    time.sleep(1)
+    time.sleep(0.5)
     result = getSearchResult()
 
     return result
@@ -93,7 +93,7 @@ def addKeywordSearch(option, input):
     options = ('서명', '저자', '발행처')
     if detail_btn.text != '간략검색':
         detail_btn.click()
-        time.sleep(1)
+        time.sleep(0.5)
     if option < 4:
         ex_keyword = driver.find_elements_by_css_selector(
             'div.ikc-search-ex-keyword-wrap.col-lg-6.col-md-6 > div.ikc-search-ex-keyword:not(.ng-hide)')[-1]
@@ -104,13 +104,11 @@ def addKeywordSearch(option, input):
     else:
         elem = driver.find_element_by_css_selector('div.ikc-date-picker.ikc-date-picker-from > span > span > input')
         elem.send_keys(input)
-        time.sleep(0.5)
         driver.find_element_by_css_selector('div.ikc-search-ex-keyword-wrap.col-lg-6.col-md-6 > div.ikc-search-ex-keyword:not(.ng-hide) > span.ikc-search-keyword > input').click()
-        time.sleep(0.5)
         elem = driver.find_element_by_css_selector('div.ikc-date-picker.ikc-date-picker-to > span > span > input')
         elem.send_keys(input)
     driver.find_element_by_css_selector('div.ikc-search-ex-btns > input.ikc-btn-search').click()
-    time.sleep(1)
+    time.sleep(0.5)
 
     result = getSearchResult()
     return result
