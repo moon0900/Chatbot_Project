@@ -215,9 +215,16 @@ for idx, d in enumerate(data):
         newDatas.append(newData)
 data = data + newDatas
 fields = ['question', 'intent']
-rows = data
-print(len(rows))
-with open('train_intent_SR_auged.csv', 'w', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerow(fields)
-    writer.writerows(rows)
+df = pd.DataFrame(data, columns = fields)
+print(len(df))
+
+# 레이블별 데이터 갯수 균일화(가장 적은 수에 맞춰서)
+min_cnt = min(df['intent'].value_counts())
+sample_df = pd.DataFrame(columns=fields)
+for g in df['intent'].unique():
+    temp_df = df.query('intent==@g').sample(n=min_cnt)  ## 그룹별 데이터 추출 및 2개 비복원 추출
+    sample_df = pd.concat([sample_df, temp_df])  ## 데이터 추가
+sample_df = sample_df.reset_index(drop=True)  ## 인덱스 초기화
+
+print(sample_df['intent'].value_counts())
+sample_df.to_csv('train_intent_SR_auged.csv', index=None)
