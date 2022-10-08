@@ -14,7 +14,7 @@ from tensorflow.keras.utils import to_categorical
 import pickle
 
 # 데이터 읽어오기
-df = pd.read_csv('./train_intent_SR_auged.csv', encoding='cp949')
+df = pd.read_csv('./train_intent_SR_auged.csv')
 #df.sample(20)
 df.groupby('intent').size().reset_index(name='count')
 
