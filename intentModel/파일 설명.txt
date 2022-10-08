@@ -1,0 +1,27 @@
+<py 파일>
+py파일은 파일 상단에 주석으로 뭘 위한 코드인지 설명을 작성하였음.
+
+<csv파일>
+1. train_intent.csv 파일
+ - [질문, 의도] 원본 데이터
+ - data_generation.py에서 몇몇 단어를 대체해가며 질문 데이터를 증강시키도록 하였으므로, 비슷한 문장을 일일이 적을 필요 X
+ - 단, 대체 표현 사전에 등록되지 않은 아예 다른 표현을 쓰거나 문장 구조가 다른 질문이 생각나면 데이터를 추가해주길 바람.
+
+2. train_intent_SR.csv
+ - 위 1번 파일을 단어 표현 대체(ex. 운영하나요? -> 문 여나요?)해가며 증강시킨 데이터 파일
+ - data_generation.py에 의해 생성된 파일
+ - 대체 표현을 다양화하려면 data_generation.py에서 synonym 딕셔너리 수정 요망
+
+3. train_intent_SR_auged.csv
+ - 위 2번 파일을 어순을 바꿔가며 증강시킨 데이터 파일
+ - kor_eda.py에 의해 생성된 파일
+
+<기타 파일>
+1. intent_model.h5
+model_train.py로 학습시킨 모델
+임베딩한 문장을 [도서검색, 운영시간, 자리현황] 중 하나의 클래스로 분류
+
+2. tokenizer.pickle
+학습시킨 tokenizer(단어 토큰화해주는 클래스)
+테스트 문장을 분류시킬 때, 학습시킨 tokenizer로 문장을 토큰화시켜야 제대로 예측함.
+
