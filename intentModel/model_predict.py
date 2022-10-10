@@ -6,7 +6,6 @@ pip install konlpy 설치 필요
 
 from tensorflow.keras.models import load_model
 from konlpy.tag import Okt
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import pickle
@@ -17,7 +16,7 @@ with open('tokenizer.pickle', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
 # 레이블 정보
-idx_label = ['도서검색', '운영시간', '자리현황']
+idx_label = ['공지검색', '도서검색', '운영시간', '자리현황']
 
 
 # 모델 불러오기 & 모델 input 크기 구하기
@@ -43,6 +42,8 @@ def get_prediction(model, input):
   return prediction
 
 query = ['연오의 파이썬 책이 있는지 궁금해', '파이썬 알고리즘 인터뷰책 좀 찾아줘','노트북실 몇시에 열어?','휴게실 몇시부터 운영해?','열람실 좌석 남았어?', '열람실 좌석 현황이 궁금해!', '열람실 몇시까지야?', '지금 노트북존 문 열었어?', '메타버스책 어디에있는지 알려줘']
+query += ['교양노동법','교양노동법 있어?','안드로이드 프로그래밍','죽음의 수용소에서', '죽음의 수용소에서 있어?', '죽음의 수용소에서 빌릴 수 있어?','빈 좌석 몇 개?', '빈 좌석?']
+query += ['공지 좀 찾아줘', '새 소식 찾고 싶어', '무슨 소식 있나 찾고 싶어', '최근 공지가 궁금해','최근 공지사항이 뭐 있는지 궁금해']
 for q in query:
   p = get_prediction(model, q)
   print('질문:', q, '\t모델이 예측한 질문의 의도:', idx_label[p[0]])
