@@ -74,7 +74,8 @@ def classifyIntent(update, context):
         user_text = user_text.strip()
         if len(user_text) > 1:
             context.user_data['keyword'] = user_text
-            return NOTICESEARCH
+            state = noticeSearchStart(update, context)
+            return state
         update.message.reply_text('\U0001F4E2 <b>찾아보고 싶은 공지사항</b>이 있으신가요?\n검색하고 싶은 \U0001F50D<b>키워드</b>를 입력해주세요',
                                   parse_mode=telegram.ParseMode.HTML)
         return NOTICESEARCH
@@ -88,7 +89,8 @@ def classifyIntent(update, context):
         user_text = user_text.strip()
         if len(user_text) > 1:
             context.user_data['keyword'] = user_text
-            return BOOKSEARCH
+            state = bookSearchStart(update, context)
+            return state
         update.message.reply_text('\U0001F4D5 <b>소장 도서 검색</b>을 시작합니다.\n검색할 \U0001F50D<b>키워드</b>를 입력해주세요',
                                   parse_mode=telegram.ParseMode.HTML)
         return BOOKSEARCH
