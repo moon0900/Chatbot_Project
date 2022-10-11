@@ -70,7 +70,7 @@ def classifyIntent(update, context):
                       ' 좀 ', '찾아주세요', '알려주세요', '어딨어요', '어디 있어요', '줄 수 있나요',
                       '줄 수 있어요', '줄 수 있어', '있어요', '있나요', '공지사항', '공지', '교재']
         user_text = re.sub('|'.join(rm_filters), '', user_text)
-        user_text = user_text.strip('?')
+        user_text = re.sub(r"[^\uAC00-\uD7A30-9a-zA-Z\s]", "", user_text)
         user_text = user_text.strip()
         if len(user_text) > 1:
             context.user_data['keyword'] = user_text
