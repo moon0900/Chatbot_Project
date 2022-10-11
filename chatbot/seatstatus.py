@@ -2,8 +2,8 @@ from selenium import webdriver
 import pandas as pd
 import os.path
 
-def Crawling(i):
-    browser = webdriver.Chrome("C:/Users/rmfls/PycharmProjects/chromedriver_win32/chromedriver.exe")
+def Crawling():
+    browser = webdriver.Chrome("../chromedriver.exe")
     browser.get("http://mcard.duksung.ac.kr:8080/PW/pw20.php")
     #time.sleep(3)
     table = browser.find_element_by_class_name('default')
@@ -40,15 +40,7 @@ def Crawling(i):
     list_left = list(filter(None, list_left))
     # 1부터 9까지는 열람실 11부터13까지는 스터디룸 15부터17까지는 PCZone
     # print(list_location[1:10])
-    readingroom = {'loc': list_location[1:12], 'using': list_using[1:10], 'left': list_left[1:12]}
-    studyroom = {'loc': list_location[13:15], 'using': list_using[13:15], 'left': list_left[13:15]}
-    pcroom = {'loc': list_location[15:12], 'using': list_using[15:18], 'left': list_left[15:18]}
+
     #append가 아닌이유?리스트를 하나 씩 출력하기 어렵다.print문을 이용할게 아니라 bot.sendmessage()함수에서는..
-    seat_status+=readingroom['loc'][i]+"의 잔여좌석 수 : "+readingroom['left'][i]+"\n"
-    df = pd.DataFrame({'열람실명': list_location[1:12], '잔여좌석': list_left[1:12]})
-    os.chdir('.')
 
-    df['열람실명'].allignment = Alignment(horizontal="center", vertical="center")
-    df.to_csv('seatstatusef.csv', encoding='cp949', index=False)
-
-    return seat_status
+    return list_left
