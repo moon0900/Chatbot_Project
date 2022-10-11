@@ -1,20 +1,27 @@
 import telegram
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
-import crawlingBookInfo as cb
+from booksearch import crawlingBookInfo as cb
+import re
 
-token = '봇 토큰'
+token = '토큰 id'
 id = '사용자 id'
 
 # conversation states
-SEARCH, FEWRESULTS, MANYRESULTS, SETSEARCHOPTION, ADDKEYWORD, NORESULT, OTHER = range(7)
+BOOKSEARCH, BOOKFEWRESULTS, BOOKMANYRESULTS, BOOKSETSEARCHOPTION, BOOKADDKEYWORD, BOOKNORESULT, BOOKOTHER = range(7)
 
 def bookSearchGetInput(update, context):
     update.message.reply_text('\U0001F4D5 <b>소장 도서 검색</b>을 시작합니다.\n검색할 \U0001F50D<b>키워드</b>를 입력해주세요', parse_mode=telegram.ParseMode.HTML)
-    return SEARCH
+    return BOOKSEARCH
 
 def bookSearchStart(update, context):
-    chat_txt = update.message.text
+    if 'keyword' in context.user_data:
+        chat_txt = context.user_data['keyword']
+        del context.user_data['keyword']
+    else:
+        chat_txt = update.message.text
+    update.message.reply_text('\U0001F50D<b>'+chat_txt+'</b>(으)로 검색합니다.',
+                              parse_mode=telegram.ParseMode.HTML)
     result = cb.startSearch(chat_txt)
     return_val = showSearchResult(update,context,result)
     return return_val
@@ -52,7 +59,7 @@ def showSearchResult(update, context, result):
             '우리 도서관에서 소장하고 있지 않은 자료는 <b>구입 신청</b>을 하거나 <b>타대학 도서관</b>에서 이용할 수 있습니다. 안내해드릴까요?'
             , reply_markup=reply_markup, parse_mode=telegram.ParseMode.HTML
         )
-        return NORESULT
+        return BOOKNORESULT
 
     elif result[0] == 1:    # 검색결과 1건
         update.message.reply_text('총 <b>1</b> 건의 검색 결과가 존재합니다.\n해당 도서의 정보를 안내합니다.', parse_mode=telegram.ParseMode.HTML)
@@ -86,7 +93,7 @@ def showSearchResult(update, context, result):
             '이 중에서 찾으시는 도서가 있으신가요? 없으시다면 <b>다른 키워드로 검색</b>할 수 있습니다.'
             , reply_markup=reply_markup, parse_mode=telegram.ParseMode.HTML
         )
-        return FEWRESULTS
+        return BOOKFEWRESULTS
 
     elif result[0] == 3:    # 검색 결과 6건 이상
         cntText, books = result[1], result[2]
@@ -104,17 +111,11 @@ def showSearchResult(update, context, result):
             f'상위 5 건 중에 찾으시는 도서가 있으신가요? 없으시다면 <b>{cntText}</b> 건의 결과 내에서 <b>추가 검색</b>을 진행하거나 <b>다른 키워드로 검색</b>할 수 있습니다.'
             , reply_markup=reply_markup, parse_mode=telegram.ParseMode.HTML
         )
-        return MANYRESULTS
+        return BOOKMANYRESULTS
 
 def cancel(update, context):
     update.message.reply_text('또 필요한 일이 있으면 불러주세요.')
     return ConversationHandler.END
-
-# 기타 메시지에 대한 챗봇의 답변 패턴
-def echo(update, context):
-    chat_id = update.message.chat_id
-    chat_txt = update.message.text
-    update.message.reply_text('죄송합니다. 무슨 말인지 모르겠어요.')
 
 def checkSearchResult(update, context):
     query = update.callback_query
@@ -144,11 +145,11 @@ def checkSearchResult(update, context):
         ]
         reply_markup = InlineKeyboardMarkup(buttons)
         update.callback_query.message.edit_text('어떤 \U0001F50D<b>키워드</b>를 추가하시겠습니까?', reply_markup=reply_markup, parse_mode=telegram.ParseMode.HTML)
-        return SETSEARCHOPTION
+        return BOOKSETSEARCHOPTION
     else:
         update.callback_query.message.edit_text('다른 키워드로 소장 도서를 검색합니다.\n검색 \U0001F50D<b>키워드</b>를 입력해주세요.', parse_mode=telegram.ParseMode.HTML
         )
-        return SEARCH
+        return BOOKSEARCH
 
 def checkKeywordToAdd(update, context):
     query = update.callback_query
@@ -160,7 +161,7 @@ def checkKeywordToAdd(update, context):
         update.callback_query.message.edit_text(f'\U0001F50D<b>[{option[data-1]}] 검색 키워드</b>를 입력해주세요.', parse_mode=telegram.ParseMode.HTML)
     else:
         update.callback_query.message.edit_text('찾으시는 자료의 \U0001F50D<b>발행년도</b>를 입력해주세요.', parse_mode=telegram.ParseMode.HTML)
-    return ADDKEYWORD
+    return BOOKADDKEYWORD
 
 def bookAddSearch(update, context):
     option = context.user_data['selection']
@@ -181,7 +182,7 @@ def checkNoResult(update, context):
         reply_markup = InlineKeyboardMarkup(buttons)
         update.callback_query.message.edit_text('우리 도서관에 없는 자료는 타대학을 방문하여 자료를 <b>열람</b> 및 <b>대출</b>할 수 있으며 <b>방문하지 않고 복사신청</b>하여 우편으로 받을 수도 있습니다.\n'
                                                 '이 중 어떤 서비스를 안내해드릴까요?', reply_markup=reply_markup, parse_mode=telegram.ParseMode.HTML)
-        return OTHER
+        return BOOKOTHER
 
     elif data == "2":   # 자료구입신청
         update.callback_query.message.edit_text(
@@ -231,35 +232,3 @@ def guideOtherWay(update, context):
             '\U0001F517 안내 및 신청 URL: https://discover.duksung.ac.kr/#/service/other-college/dds'
             , parse_mode=telegram.ParseMode.HTML)
         return ConversationHandler.END
-
-def main():
-    bot = telegram.Bot(token=token)
-    updater = Updater(token=token, use_context=True)
-    dp = updater.dispatcher
-
-    conv_handler = ConversationHandler(
-        entry_points=[MessageHandler(Filters.text, bookSearchGetInput)],
-
-        states={
-            SEARCH: [MessageHandler(Filters.text, bookSearchStart)],
-            FEWRESULTS:  [CallbackQueryHandler(checkSearchResult)],
-            MANYRESULTS: [CallbackQueryHandler(checkSearchResult)],
-            SETSEARCHOPTION: [CallbackQueryHandler(checkKeywordToAdd)],
-            ADDKEYWORD: [MessageHandler(Filters.text, bookAddSearch)],
-            NORESULT: [CallbackQueryHandler(checkNoResult)],
-            OTHER: [CallbackQueryHandler(guideOtherWay)]
-        },
-
-        fallbacks=[CommandHandler('cancel', cancel)]
-    )
-
-    dp.add_handler(conv_handler)
-    dp.add_handler(MessageHandler(Filters.text, echo))
-
-    updater.start_polling()
-
-    updater.idle()
-
-
-if __name__ == '__main__':
-    main()
