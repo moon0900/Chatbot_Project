@@ -70,7 +70,7 @@ def classifyIntent(update, context):
                       ' 좀 ', '찾아주세요', '알려주세요', '어딨어요', '어디 있어요', '줄 수 있나요',
                       '줄 수 있어요', '줄 수 있어', '있어요', '있나요', '공지사항', '공지', '교재']
         user_text = re.sub('|'.join(rm_filters), '', user_text)
-        user_text = re.sub(r"[^\uAC00-\uD7A30-9a-zA-Z\s]", "", user_text)
+        user_text = user_text.strip('?')
         user_text = user_text.strip()
         if len(user_text) > 1:
             context.user_data['keyword'] = user_text
@@ -101,7 +101,7 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='일반도서실의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
             elif '노트북' in user_text:
                 bot.send_message(chat_id=id, text='노트북존의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
-            elif '멀티미디어' in user_text:
+            elif '미디어' in user_text:
                 bot.send_message(chat_id=id, text='멀티미디어실의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
             elif 'play' in user_text:
                 bot.send_message(chat_id=id, text='Play N Create의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
@@ -113,6 +113,15 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
             elif '휴게실' in user_text:
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
+            elif '열람실' in user_text:
+                task_buttons3 = [
+                    [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
+                    [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
+                    [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
+                ]
+                reply_markup = InlineKeyboardMarkup(task_buttons3)
+                bot.send_message(chat_id=id, text='\U0001F4D5<b>방학 중</b> 열람실 운영시간입니다.', reply_markup=reply_markup,
+                                 parse_mode='HTML')
             else:
                 cmd_task_buttons2()
         elif '학기' in user_text:
@@ -120,7 +129,7 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='일반도서실의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00')
             elif '노트북' in user_text:
                 bot.send_message(chat_id=id, text='노트북존의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 휴관')
-            elif '멀티미디어' in user_text:
+            elif '미디어' in user_text:
                 bot.send_message(chat_id=id, text='멀티미디어실의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00')
             elif 'play' in user_text:
                 bot.send_message(chat_id=id, text='Play N Create의 방학 중 운영시간은 평일: 9:00 ~ 19:00, 토요일: 휴관')
@@ -132,6 +141,15 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
             elif '휴게실' in user_text:
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
+            elif '열람실' in user_text:
+                task_buttons3 = [
+                    [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
+                    [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
+                    [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
+                ]
+                reply_markup = InlineKeyboardMarkup(task_buttons3)
+                bot.send_message(chat_id=id, text='\U0001F4D5<b>학기 중</b> 열람실 운영시간입니다.', reply_markup=reply_markup,
+                                 parse_mode='HTML')
             else:
                 cmd_task_buttons1()
         else:
