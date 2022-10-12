@@ -18,8 +18,8 @@ import re
 BOOKSEARCH, BOOKFEWRESULTS, BOOKMANYRESULTS, BOOKSETSEARCHOPTION, BOOKADDKEYWORD, BOOKNORESULT, BOOKOTHER,\
     NOTICESEARCH, NOTICEFEWRESULTS, NOTICEMANYRESULTS, NOTICESETSEARCHOPTION, NOTICEADDKEYWORD, NOTICENORESULT, NOTICEOTHER= range(14)
 
-token = '5715860041:AAEiuKtxuKqU0GjVmjYk2RqUbC_lA-_il8g'
-id = '5586128097'
+token = '5752050232:AAGnpg_A4lfUHtckrzLQaFSQwm1ZBVHIczM'
+id = '5744498162'
 
 tokenizer_path = '../intentModel/tokenizer.pickle'
 model_path = '../intentModel/intent_model.h5'
@@ -41,6 +41,7 @@ def question_processing(sentences):
   inputs = []
   for sentence in sentences :
     sentence = okt.morphs(sentence)
+    #단어를 숫자 처리
     encoded = tokenizer.texts_to_sequences([sentence])
     inputs.append(encoded[0])
   padded_inputs = pad_sequences(inputs, maxlen=INPUT_LEN, padding='post')
@@ -48,6 +49,7 @@ def question_processing(sentences):
 
 # 입력문장을 넣으면 모델의 예측 레이블을 리턴해주는 함수
 def get_prediction(model, input):
+    #단어 전처리
   input_sentence = question_processing(input)
   prediction = np.argmax(model.predict(input_sentence), axis = 1)
   return prediction
@@ -58,7 +60,7 @@ bot = telegram.Bot(token=token)
 
 info_message = emojize('''안녕하세요!:waving_hand:\n저는 \U0001F4D5<b>덕성여대 도서관</b>에 대하여 실시간으로 정보를 드리는 덕새챗봇입니다.''')
 filepath = '../chatbot/Duksae2.png'
-
+#의도분류
 def classifyIntent(update, context):
     # Intent Label
     # 0: '공지검색' | 1: '도서검색' | 2: '운영시간' | 3: '자리현황'
@@ -101,7 +103,7 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='일반도서실의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
             elif '노트북' in user_text:
                 bot.send_message(chat_id=id, text='노트북존의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
-            elif '미디어' in user_text:
+            elif '멀티미디어' in user_text:
                 bot.send_message(chat_id=id, text='멀티미디어실의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
             elif 'play' in user_text:
                 bot.send_message(chat_id=id, text='Play N Create의 방학 중 운영시간은 평일: 9:00 ~ 17:00, 토요일: 휴관')
@@ -113,15 +115,6 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
             elif '휴게실' in user_text:
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
-            elif '열람실' in user_text:
-                task_buttons3 = [
-                    [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
-                    [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
-                    [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
-                ]
-                reply_markup = InlineKeyboardMarkup(task_buttons3)
-                bot.send_message(chat_id=id, text='\U0001F4D5<b>방학 중</b> 열람실 운영시간입니다.', reply_markup=reply_markup,
-                                 parse_mode='HTML')
             else:
                 cmd_task_buttons2()
         elif '학기' in user_text:
@@ -129,7 +122,7 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='일반도서실의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00')
             elif '노트북' in user_text:
                 bot.send_message(chat_id=id, text='노트북존의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 휴관')
-            elif '미디어' in user_text:
+            elif '멀티미디어' in user_text:
                 bot.send_message(chat_id=id, text='멀티미디어실의 방학 중 운영시간은 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00')
             elif 'play' in user_text:
                 bot.send_message(chat_id=id, text='Play N Create의 방학 중 운영시간은 평일: 9:00 ~ 19:00, 토요일: 휴관')
@@ -141,15 +134,6 @@ def classifyIntent(update, context):
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
             elif '휴게실' in user_text:
                 bot.send_message(chat_id=id, text='연중무휴 24시간')
-            elif '열람실' in user_text:
-                task_buttons3 = [
-                    [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
-                    [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
-                    [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
-                ]
-                reply_markup = InlineKeyboardMarkup(task_buttons3)
-                bot.send_message(chat_id=id, text='\U0001F4D5<b>학기 중</b> 열람실 운영시간입니다.', reply_markup=reply_markup,
-                                 parse_mode='HTML')
             else:
                 cmd_task_buttons1()
         else:
@@ -198,29 +182,46 @@ def seat_status():
         ":down_arrow:스터디룸 예약을 원하신다면 눌러주세요:down_arrow:\n[스터디룸 예약 페이지로 이동하기](http://mcard.duksung.ac.kr:8080/PW/pw20.php):computer_mouse:"),
                      parse_mode='Markdown')
 
+
+facility_info = {
+    '일반도서실': {'학기': {'평일':'9:00 ~ 21:00', '토요일':'9:00 ~ 13:00'}, '방학':{'평일':'9:00 ~ 17:00', '토요일':'휴관'}},
+    '노트북존': {'학기': {'평일':'9:00 ~ 21:00', '토요일':'휴관'}, '방학':{'평일':'9:00 ~ 17:00', '토요일':'휴관'}},
+    '멀티미디어실': {'학기': {'평일':'9:00 ~ 21:00', '토요일':'9:00 ~ 13:00'}, '방학':{'평일':'9:00 ~ 17:00', '토요일':'휴관'}},
+    'Play N Create': {'학기': {'평일':'9:00 ~ 19:00', '토요일':'휴관'}, '방학':{'평일':'9:00 ~ 17:00', '토요일':'휴관'}},
+    '제2자유열람실': {'학기': {'평일':'6:00 ~ 23:00', '토요일':'휴관'}, '방학':{'평일':'6:00 ~ 23:00', '토요일':'휴관'}},
+    '제1자유열람실': {'학기': '연중무휴 06:00 ~ 23:00', '방학':'연중무휴 06:00 ~ 23:00'},
+    '24시간 열람실/ 휴게실': {'학기': '연중무휴 24시간', '방학':'연중무휴 24시간'}
+}
+
 def cmd_task_buttons1():
     task_buttons1 = [
-        [InlineKeyboardButton('<일반도서실> 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00  ', callback_data=30)],
-        [InlineKeyboardButton('<노트북존> 평일: 9:00 ~ 21:00, 토요일: 휴관 ', callback_data=30)],
-        [InlineKeyboardButton('<멀티미디어실> 평일: 9:00 ~ 21:00, 토요일: 9:00 ~ 13:00 ', callback_data=30)],
-        [InlineKeyboardButton('<Play N Create> 평일: 9:00 ~ 19:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
-        [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
+        [InlineKeyboardButton(' ', callback_data=30), InlineKeyboardButton('평일', callback_data=30), InlineKeyboardButton('토요일', callback_data=30)],
+        [InlineKeyboardButton('일반도서실', callback_data=30), InlineKeyboardButton('9:00 ~ 21:00', callback_data=30), InlineKeyboardButton('9:00 ~ 13:00', callback_data=30)],
+        [InlineKeyboardButton('노트북존', callback_data=30), InlineKeyboardButton('9:00 ~ 21:00', callback_data=30), InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('멀티미디어실', callback_data=30), InlineKeyboardButton('9:00 ~ 21:00', callback_data=30), InlineKeyboardButton('9:00 ~ 13:00', callback_data=30)],
+        [InlineKeyboardButton('Play N Create', callback_data=30), InlineKeyboardButton('9:00 ~ 19:00', callback_data=30), InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('제2자유열람실', callback_data=30), InlineKeyboardButton('06:00 ~ 23:00', callback_data=30), InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('제1자유열람실', callback_data=30), InlineKeyboardButton('연중무휴 06:00 ~ 23:00', callback_data=30)],
+        [InlineKeyboardButton('24시간 열람실/ 휴게실', callback_data=30), InlineKeyboardButton('연중무휴 24시간 ', callback_data=30)]
     ]
+    """
+    for facil in ['일반도서실','멀티미디어실','노트북존','Play N Create','제2자유열람실','제1자유열람실','24시간 열람실/ 휴게실']:
+        btn_row = []
+        btn_row.append(InlineKeyboardButton(facil, callback_data=30))
+    """
     reply_markup = InlineKeyboardMarkup(task_buttons1)
     bot.send_message(chat_id=id, text='\U0001F4D5<b>학기 중</b> 도서관 운영시간 안내입니다.', reply_markup=reply_markup, parse_mode='HTML')
 
 def cmd_task_buttons2():
-
     task_buttons1 = [
-        [InlineKeyboardButton('<일반도서실> 평일: 9:00 ~ 17:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<노트북존> 평일: 9:00 ~ 17:00, 토요일: 휴관 ', callback_data=30)],
-        [InlineKeyboardButton('<멀티미디어실> 평일: 9:00 ~ 17:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<Play N Create> 평일: 9:00 ~ 17:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<제1자유열람실> 연중무휴 06:00 ~ 23:00', callback_data=30)],
-        [InlineKeyboardButton('<제2자유열람실> 평일: 06:00 ~ 23:00, 토요일: 휴관', callback_data=30)],
-        [InlineKeyboardButton('<24시간 열람실/ 휴게실> 연중무휴 24시간 ', callback_data=30)]
+        [InlineKeyboardButton(' ', callback_data=30),InlineKeyboardButton('평일', callback_data=30),InlineKeyboardButton('토요일', callback_data=30)],
+        [InlineKeyboardButton('일반도서실', callback_data=30),InlineKeyboardButton('9:00 ~ 17:00', callback_data=30),InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('노트북존', callback_data=30), InlineKeyboardButton('9:00 ~ 17:00', callback_data=30),InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('멀티미디어실', callback_data=30), InlineKeyboardButton('9:00 ~ 17:00', callback_data=30),InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('Play N Create', callback_data=30), InlineKeyboardButton('9:00 ~ 17:00', callback_data=30),InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('제2자유열람실', callback_data=30),InlineKeyboardButton('06:00 ~ 23:00', callback_data=30), InlineKeyboardButton('휴관', callback_data=30)],
+        [InlineKeyboardButton('제1자유열람실', callback_data=30),InlineKeyboardButton('연중무휴 06:00 ~ 23:00', callback_data=30)],
+        [InlineKeyboardButton('24시간 열람실/ 휴게실', callback_data=30),InlineKeyboardButton('연중무휴 24시간 ', callback_data=30)]
     ]
     reply_markup = InlineKeyboardMarkup(task_buttons1)
     bot.send_message(chat_id=id, text='\U0001F4D5<b>방학 중</b> 도서관 운영시간 안내입니다.', reply_markup=reply_markup, parse_mode='HTML')
