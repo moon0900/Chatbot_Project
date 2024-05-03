@@ -1,6 +1,6 @@
 #  Library:Duk
 ### Chatbot Project
-소프트웨어 미니 프로젝트
+
 덕성여자대학교 도서관을 효율적으로 이용할 수 있게끔 해주는 텔레그램 챗봇입니다.
 
 ### 👩‍💻 developer
